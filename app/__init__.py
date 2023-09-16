@@ -1,12 +1,14 @@
 from flask import Flask
 
 from config import Config
+from app.extensions import mongo
 
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
     #initialize the flask extensions here
+    mongo.init_app(app)
 
     #register the blueprints here
     from app.main import bp as main_bp

@@ -12,20 +12,51 @@
     <p>Game Dev Test Page</p>
 
     <script>
-        let app = new PIXI.Application({width: 80, height: 80});
+        //Create a Pixi Application
+        let app = new PIXI.Application({resizeTo: window});
+        globalThis.__PIXI_APP__ = app;
         document.body.appendChild(app.view);
 
-        // create a new Sprite from an image path
-        let goblin = PIXI.Sprite.from("{{ url_for('static', filename='img/just_goblin.png') }}");
-        app.stage.addChild(goblin);
+        //Load textures
+        let sprite_text = PIXI.Texture.from("{{ url_for('static', filename='img/just_goblin.png') }}");
 
-        //game loop
-        let elapsed = 0.0;
+        createSprite(40, 40);
 
-        app.ticker.add((delta) => {
-            elapsed += delta;
-            goblin.x = 100.0 + Math.cos(elapsed/50.0) * 100.0;
-        });
+        function createSprite(x, y){
+            let sprite = new PIXI.Sprite(sprite_text);
+            sprite.eventMode = 'static';
+            sprite.cursor = 'pointer';
+            sprite.anchor.set(0.5);
+            sprite.x = x;
+            sprite.y = y;
+            sprite.on('pointerover', onHoverStart, sprite);
+            app.stage.addChild(sprite);
+            return sprite;
+        }
+
+        let HoverTarget = null;
+
+        app.stage.eventMode = 'static';
+        app.stage.hitArea = app.screen;
+        app.stage.on('pointerout', onHoverEnd);
+        
+        function onHoverStart(){
+            HoverTarget = this;
+            app.stage.on('pointermove', onHoverMove);
+        }
+
+        function onHoverMove(event){
+            if(HoverTarget){
+                HoverTarget.parent.toLocal(event.global, null, HoverTarget.position);
+            }
+        }
+
+        function onHoverEnd(){
+            if(HoverTarget){
+                app.stage.off('pointermove', onHoverMove);
+                HoverTarget = null;
+            }
+        }
     </script>
 {% endblock %}
 
