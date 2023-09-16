@@ -1,9 +1,30 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to Mindblown</title>
+    <link href="{{ url_for('static', filename='css/Titile.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static', filename='css/buttons.css')}}" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <div style="
+        background-image: url({{ url_for('static', filename='img/background-1.png')}});
+        background-repeat: no-repeat;
+        background-color: #D5F4FA;
+        background-size: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        ">
+    <h1 id="heading">Welcome to Mindblown!</h1>
+    <a href="{{ url_for('game.index') }}">
+        <img src="{{ url_for('static', filename='img/play-1.png')}}" alt="" width="246" height="246" id="button"/>
+    </a>
+    </div>
+</body>
+</html>
 
-{% block title %}Home{% endblock %}
 
-{% block content %}
-    <h1>Home</h1>
-    <p class="lead">Welcome to our brand new website!</p>
-    <p>Use this document as a way to quickly start any new project.<br>All you get is this text and a mostly barebones HTML document.</p>
-{% endblock %}
+
