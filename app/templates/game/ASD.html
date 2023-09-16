@@ -7,58 +7,119 @@
 {% block title %}ASD Game{% endblock %}
 
 {% block content %}
-    <h1>Game</h1>
+<!--Create a linebreak to prevent the screen from scaling under the navbar-->
 
-    <p>Game Dev Test Page</p>
+    <div class="container-fluid position-absolute top-50 start-50 translate-middle">
+        <script>
+            let width = window.innerWidth;
+            let height = 700;
+            //Create a Pixi Application
+            let app = new PIXI.Application({width: width, height: height, backgroundColor:'#D5F4FA'});
+            globalThis.__PIXI_APP__ = app;
+            document.body.appendChild(app.view);
 
-    <script>
-        //Create a Pixi Application
-        let app = new PIXI.Application({resizeTo: window});
-        globalThis.__PIXI_APP__ = app;
-        document.body.appendChild(app.view);
+            let elapsed = 0.0;
+    
+            //Load textures
+            let sprite_text = PIXI.Texture.from("{{ url_for('static', filename='img/moving_rabbit_not_moving.png') }}");
+            let arrow_text = PIXI.Texture.from("{{ url_for('static', filename='img/arrowHint.png') }}");
+            let target_text = PIXI.Texture.from("{{ url_for('static', filename='img/01-carrot-2.png') }}");
 
-        //Load textures
-        let sprite_text = PIXI.Texture.from("{{ url_for('static', filename='img/moving_rabbit_not_moving.png') }}");
+            let target_x = Math.random() * (width - 100) + 50;
+            let target_y = Math.random() * (height - 100) + 50;
 
-        createSprite(40, 40);
+            let bunny_x = Math.random() * (width - 100) + 50;
+            let bunny_y = Math.random() * (height - 100) + 50;
 
-        function createSprite(x, y){
-            let sprite = new PIXI.Sprite(sprite_text);
-            sprite.eventMode = 'static';
-            sprite.cursor = 'pointer';
-            sprite.anchor.set(0.5);
-            sprite.x = x;
-            sprite.y = y;
-            sprite.scale.set(6)
-            sprite.on('pointerover', onHoverStart, sprite);
-            app.stage.addChild(sprite);
-            return sprite;
-        }
-
-        let HoverTarget = null;
-
-        app.stage.eventMode = 'static';
-        app.stage.hitArea = app.screen;
-        app.stage.on('pointerout', onHoverEnd);
-        
-        function onHoverStart(){
-            HoverTarget = this;
-            app.stage.on('pointermove', onHoverMove);
-        }
-
-        function onHoverMove(event){
-            if(HoverTarget){
-                HoverTarget.parent.toLocal(event.global, null, HoverTarget.position);
+            //if the target is too close to the bunny, move it
+            while(Math.sqrt(Math.pow(target_x - bunny_x, 2) + Math.pow(target_y - bunny_y, 2)) < 500){
+                target_x = Math.random() * (width - 100) + 50;
+                target_y = Math.random() * (height - 100) + 50;
             }
-        }
 
-        function onHoverEnd(){
-            if(HoverTarget){
-                app.stage.off('pointermove', onHoverMove);
-                HoverTarget = null;
+            let bunny = createSprite(bunny_x, bunny_y, sprite_text, 6, true);
+            let target = createSprite(target_x, target_y, target_text, 0.1, false);
+            let arrow = null;
+    
+            function createSprite(x, y, texture, size, hoverable){
+                let sprite = new PIXI.Sprite(texture);
+                sprite.eventMode = 'static';
+                sprite.cursor = 'pointer';
+                sprite.anchor.set(0.5);
+                sprite.x = x;
+                sprite.y = y;
+                sprite.scale.set(size)
+                if(hoverable){
+                    sprite.on('pointerover', onHoverStart, sprite);
+                }
+                app.stage.addChild(sprite);
+                return sprite;
             }
-        }
-    </script>
+
+            function removeSprite(sprite){
+                console.log(sprite);
+                app.stage.removeChild(sprite);
+            }
+
+            let HoverTarget = null;
+            let timePaused = 0.0;
+    
+            app.stage.eventMode = 'static';
+            app.stage.hitArea = app.screen;
+            app.stage.on('pointerout', onHoverEnd);
+            
+            function onHoverStart(){
+                HoverTarget = this;
+                if(arrow){
+                    removeSprite(arrow);
+                    arrow = null;
+                }
+                app.stage.on('pointermove', onHoverMove);
+            }
+    
+            function onHoverMove(event){
+                if(HoverTarget){
+                    HoverTarget.parent.toLocal(event.global, null, HoverTarget.position);
+                }
+            }
+    
+            function onHoverEnd(){
+                if(HoverTarget){
+                    app.stage.off('pointermove', onHoverMove);
+                    HoverTarget = null;
+                }
+            }
+
+            function gameOver(){
+                //stops the game and force the user to redirect to the game check page
+                app.stop();
+                //redirect to the game check page
+                // window.location.href = "";
+            }
+
+            app.ticker.add(function(delta){
+                elapsed += delta;
+                if(HoverTarget == null){
+                    timePaused += delta;
+                } else {
+                    timePaused = 0.0;
+                }
+                if(elapsed > 3000){
+                    //game over
+                    gameOver();
+                }
+                if(timePaused > 1000 && HoverTarget == null && arrow == null){
+                    //work out the angle between the bunny and the target
+                    let angle = Math.atan2(target.y - bunny.y, target.x - bunny.x);
+                    //work out the distance between the bunny and the target
+                    let distance = Math.sqrt(Math.pow(target.y - bunny.y, 2) + Math.pow(target.x - bunny.x, 2));
+                    //place an arrow on the screen to show the direction
+                    arrow = createSprite(bunny.x + Math.cos(angle) * distance * 0.5, bunny.y + Math.sin(angle) * distance * 0.5, arrow_text, 2, false);
+                    arrow.rotation = angle;
+                }
+            });
+        </script>
+    </div>
 {% endblock %}
 
 
