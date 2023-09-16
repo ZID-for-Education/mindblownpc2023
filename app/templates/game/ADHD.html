@@ -7,67 +7,106 @@
 {% block title %}ADHD Game{% endblock %}
 
 {% block content %}
-    <h1>Game</h1>
+    <div class="container-fluid position-absolute top-50 start-50 translate-middle">
+        <script>
+            let width = window.innerWidth;
+            let height = 700;
+            //Create a Pixi Application
+            let app = new PIXI.Application({width: width, height: height, backgroundColor:'#D5F4FA'});
+            globalThis.__PIXI_APP__ = app;
+            document.body.appendChild(app.view);
+    
+            //Load textures
+            let sprite_text = PIXI.Texture.from("{{ url_for('static', filename='img/01-carrot-2.png') }}");
+            let default_icon = "url({{ url_for('static', filename='img/moving_rabbit_cursor.png') }}), auto";
+            let hover_icon = "url({{ url_for('static', filename='img/cursor_sat.png') }}), auto";
 
-    <p>Game Dev Test Page</p>
+            let target_x = Math.random() * (width - 100) + 50;
+            let target_y = Math.random() * (height - 100) + 50;
 
-    <script>
-        //Create a Pixi Application
-        let app = new PIXI.Application({resizeTo: window});
-        globalThis.__PIXI_APP__ = app;
-        document.body.appendChild(app.view);
-
-        //Load textures
-        let sprite_text = PIXI.Texture.from("{{ url_for('static', filename='img/01-carrot-2.png') }}");
-
-        target = createSprite(40, 40);
-
-        let currentDirectionX = 1;
-        let currentDirectionY = 1;
-        let currentSpeed = 0.4;
-
-        let elapsed = 0.0;
-
-        function createSprite(x, y){
-            let sprite = new PIXI.Sprite(sprite_text);
-            sprite.eventMode = 'static';
-            sprite.cursor = 'pointer';
-            sprite.anchor.set(0.5);
-            sprite.x = x;
-            sprite.y = y;
-            sprite.scale.set(0.1)
-            app.stage.addChild(sprite);
-            return sprite;
-        }
-
-        app.ticker.add(function(delta){
-            //sprite's x and y are changed randomly and incrementally here
-            //using math random
-            elapsed += delta;
-            target.x += currentDirectionX * currentSpeed;
-            target.y += currentDirectionY * currentSpeed;
-            //if the target's x is smaller than 0 or bigger than the width of the screen
-            //change the direction
-            if(target.x < 0 || target.x > app.screen.width){
-                currentDirectionX *= -1;
+            let target = createSprite(target_x, target_y, sprite_text, 0.1, true);
+            app.renderer.events.cursorStyles.default = default_icon;
+            app.renderer.events.cursorStyles.hover = hover_icon;
+    
+            let currentDirectionX = 1;
+            let currentDirectionY = 1;
+            let currentSpeed = 0.4;
+    
+            let elapsed = 0.0;
+            let eaten = 0.0;
+    
+            function createSprite(x, y, texture, size, hoverable){
+                let sprite = new PIXI.Sprite(texture);
+                sprite.eventMode = 'static';
+                sprite.cursor = 'hover';
+                sprite.anchor.set(0.5);
+                sprite.x = x;
+                sprite.y = y;
+                sprite.scale.set(size)
+                if(hoverable){
+                    sprite.on('pointerover', onHoverStart, sprite);
+                }
+                app.stage.addChild(sprite);
+                return sprite;
             }
-            //if the target's y is smaller than 0 or bigger than the height of the screen
-            //change the direction
-            if(target.y < 0 || target.y > app.screen.height){
-                currentDirectionY *= -1;
+
+            let HoverTarget = null;
+
+            app.stage.eventMode = 'static';
+            app.stage.hitArea = app.screen;
+            app.stage.on('pointerout', onHoverEnd);
+
+            function onHoverStart(){
+                HoverTarget = this;
             }
-            
-            if(elapsed > 300){
-                elapsed = 0.0;
-                //randomly change direction
-                currentDirectionX = Math.random() * 2 - 1;
-                currentDirectionY = Math.random() * 2 - 1;
-                //convert the direction to a whole number
-                currentDirectionX = Math.round(currentDirectionX);
-                currentDirectionY = Math.round(currentDirectionY);
+
+            function onHoverEnd(){
+                HoverTarget = null;
             }
-        });
-    </script>
+    
+            app.ticker.add(function(delta){
+                //sprite's x and y are changed randomly and incrementally here
+                //using math random
+                elapsed += delta;
+                target.x += currentDirectionX * currentSpeed;
+                target.y += currentDirectionY * currentSpeed;
+                //if the target's x is smaller than 0 or bigger than the width of the screen
+                //change the direction
+                if(target.x < 0 || target.x > app.screen.width){
+                    currentDirectionX *= -1;
+                }
+                if(HoverTarget){
+                    eaten += delta;
+                }
+                console.log(eaten);
+                //if the target's y is smaller than 0 or bigger than the height of the screen
+                //change the direction
+                if(target.y < 0 || target.y > app.screen.height){
+                    currentDirectionY *= -1;
+                }
+                
+                if(elapsed > 300){
+                    elapsed = 0.0;
+                    //randomly change direction
+                    currentDirectionX = Math.random() * 2 - 1;
+                    currentDirectionY = Math.random() * 2 - 1;
+                    //convert the direction to a whole number
+                    currentDirectionX = Math.round(currentDirectionX);
+                    currentDirectionY = Math.round(currentDirectionY);
+                    //if any direction is 0, randomly change it to 1 or -1
+                    if(currentDirectionX == 0){
+                        currentDirectionX = Math.random() * 2 - 1;
+                        currentDirectionX = Math.round(currentDirectionX);
+                    }
+                    if(currentDirectionY == 0){
+                        currentDirectionY = Math.random() * 2 - 1;
+                        currentDirectionY = Math.round(currentDirectionY);
+                    }
+                }
+            });
+        </script>
+    </div>
+    
 {% endblock %}
 
 
