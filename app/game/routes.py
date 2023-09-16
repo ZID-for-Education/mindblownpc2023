@@ -7,5 +7,5 @@ def index():
     return render_template('game/index.html')
 
 @bp.route('/ASD')
-def index():
+def ASD():
     return render_template('game/ASD.html')
