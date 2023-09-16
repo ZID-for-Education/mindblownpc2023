@@ -1,0 +1,73 @@
+<script src="https://pixijs.download/release/pixi.min.js"></script>
+
+<!-- <script src="https://pixijs.download/release/pixi.min.js"></script> -->
+
+{% extends "base.html" %}
+
+{% block title %}ADHD Game{% endblock %}
+
+{% block content %}
+    <h1>Game</h1>
+
+    <p>Game Dev Test Page</p>
+
+    <script>
+        //Create a Pixi Application
+        let app = new PIXI.Application({resizeTo: window});
+        globalThis.__PIXI_APP__ = app;
+        document.body.appendChild(app.view);
+
+        //Load textures
+        let sprite_text = PIXI.Texture.from("{{ url_for('static', filename='img/01-carrot-2.png') }}");
+
+        target = createSprite(40, 40);
+
+        let currentDirectionX = 1;
+        let currentDirectionY = 1;
+        let currentSpeed = 0.4;
+
+        let elapsed = 0.0;
+
+        function createSprite(x, y){
+            let sprite = new PIXI.Sprite(sprite_text);
+            sprite.eventMode = 'static';
+            sprite.cursor = 'pointer';
+            sprite.anchor.set(0.5);
+            sprite.x = x;
+            sprite.y = y;
+            sprite.scale.set(0.1)
+            app.stage.addChild(sprite);
+            return sprite;
+        }
+
+        app.ticker.add(function(delta){
+            //sprite's x and y are changed randomly and incrementally here
+            //using math random
+            elapsed += delta;
+            target.x += currentDirectionX * currentSpeed;
+            target.y += currentDirectionY * currentSpeed;
+            //if the target's x is smaller than 0 or bigger than the width of the screen
+            //change the direction
+            if(target.x < 0 || target.x > app.screen.width){
+                currentDirectionX *= -1;
+            }
+            //if the target's y is smaller than 0 or bigger than the height of the screen
+            //change the direction
+            if(target.y < 0 || target.y > app.screen.height){
+                currentDirectionY *= -1;
+            }
+            
+            if(elapsed > 300){
+                elapsed = 0.0;
+                //randomly change direction
+                currentDirectionX = Math.random() * 2 - 1;
+                currentDirectionY = Math.random() * 2 - 1;
+                //convert the direction to a whole number
+                currentDirectionX = Math.round(currentDirectionX);
+                currentDirectionY = Math.round(currentDirectionY);
+            }
+        });
+    </script>
+{% endblock %}
+
+
