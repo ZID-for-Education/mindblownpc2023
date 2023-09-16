@@ -1,0 +1,63 @@
+<script src="https://pixijs.download/release/pixi.min.js"></script>
+
+<!-- <script src="https://pixijs.download/release/pixi.min.js"></script> -->
+
+{% extends "base.html" %}
+
+{% block title %}ASD Game{% endblock %}
+
+{% block content %}
+    <h1>Game</h1>
+
+    <p>Game Dev Test Page</p>
+
+    <script>
+        //Create a Pixi Application
+        let app = new PIXI.Application({resizeTo: window});
+        globalThis.__PIXI_APP__ = app;
+        document.body.appendChild(app.view);
+
+        //Load textures
+        let sprite_text = PIXI.Texture.from("{{ url_for('static', filename='img/just_goblin.png') }}");
+
+        createSprite(40, 40);
+
+        function createSprite(x, y){
+            let sprite = new PIXI.Sprite(sprite_text);
+            sprite.eventMode = 'static';
+            sprite.cursor = 'pointer';
+            sprite.anchor.set(0.5);
+            sprite.x = x;
+            sprite.y = y;
+            sprite.on('pointerover', onHoverStart, sprite);
+            app.stage.addChild(sprite);
+            return sprite;
+        }
+
+        let HoverTarget = null;
+
+        app.stage.eventMode = 'static';
+        app.stage.hitArea = app.screen;
+        app.stage.on('pointerout', onHoverEnd);
+        
+        function onHoverStart(){
+            HoverTarget = this;
+            app.stage.on('pointermove', onHoverMove);
+        }
+
+        function onHoverMove(event){
+            if(HoverTarget){
+                HoverTarget.parent.toLocal(event.global, null, HoverTarget.position);
+            }
+        }
+
+        function onHoverEnd(){
+            if(HoverTarget){
+                app.stage.off('pointermove', onHoverMove);
+                HoverTarget = null;
+            }
+        }
+    </script>
+{% endblock %}
+
+
