@@ -1,3 +1,7 @@
+<script src="https://pixijs.download/release/pixi.min.js"></script>
+
+<!-- <script src="https://pixijs.download/release/pixi.min.js"></script> -->
+
 {% extends "base.html" %}
 
 {% block title %}Game{% endblock %}
@@ -5,7 +9,24 @@
 {% block content %}
     <h1>Game</h1>
 
-    <p class="lead">Welcome to our brand new website!</p>
+    <p>Game Dev Test Page</p>
 
-    <p>Use this document as a way to quickly start any new project.<br>All you get is this text and a mostly barebones HTML document.</p>
+    <script>
+        let app = new PIXI.Application({width: 80, height: 80});
+        document.body.appendChild(app.view);
+
+        // create a new Sprite from an image path
+        let goblin = PIXI.Sprite.from("{{ url_for('static', filename='img/just_goblin.png') }}");
+        app.stage.addChild(goblin);
+
+        //game loop
+        let elapsed = 0.0;
+
+        app.ticker.add((delta) => {
+            elapsed += delta;
+            goblin.x = 100.0 + Math.cos(elapsed/50.0) * 100.0;
+        });
+    </script>
 {% endblock %}
+
+
