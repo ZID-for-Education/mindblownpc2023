@@ -5,6 +5,16 @@
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
+    <nav>
+        <ul>
+            <li>
+                <a href = "{{ url_for('main.index') }}">Home</a>
+            </li>
+            <li>
+                <a href = "{{ url_for('game.index') }}">Game</a>
+            </li>
+        </ul>
+    </nav>
     {% block content %}{% endblock %}
 </body>
 </html>
