@@ -9,3 +9,7 @@ def index():
 @bp.route('/ASD')
 def ASD():
     return render_template('game/ASD.html')
+
+@bp.route('/ADHD')
+def ADHD():
+    return render_template('game/ADHD.html')

@@ -18,7 +18,7 @@
         document.body.appendChild(app.view);
 
         //Load textures
-        let sprite_text = PIXI.Texture.from("{{ url_for('static', filename='img/just_goblin.png') }}");
+        let sprite_text = PIXI.Texture.from("{{ url_for('static', filename='img/moving_rabbit_not_moving.png') }}");
 
         createSprite(40, 40);
 
@@ -29,6 +29,7 @@
             sprite.anchor.set(0.5);
             sprite.x = x;
             sprite.y = y;
+            sprite.scale.set(6)
             sprite.on('pointerover', onHoverStart, sprite);
             app.stage.addChild(sprite);
             return sprite;
