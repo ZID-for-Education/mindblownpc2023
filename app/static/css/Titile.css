@@ -1,0 +1,10 @@
+@charset "UTF-8";
+#heading {
+	float: none;
+	clear: both;
+	font-family: Impact, Haettenschweiler, "Franklin Gothic Bold", "Arial Black", sans-serif;
+	text-align: center;
+	font-variant: normal;
+	font-weight: normal;
+	font-size: 120px;
+}
