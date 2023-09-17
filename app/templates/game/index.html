@@ -3,7 +3,13 @@
 {% block title %}Game{% endblock %}
 
 {% block content %}
-    <h1>Game</h1>
-    <p class="lead">Welcome to our brand new website!</p>
-    <p>Use this document as a way to quickly start any new project.<br>All you get is this text and a mostly barebones HTML document.</p>
+    <div class="container-fluid">
+        <h1>Game</h1>
+        <p class="lead">Welcome to the game! This is a temporary placeholder, as authentication, authorization and accounting have not been setup yet.</p>
+        <p>
+            <a class="btn btn-primary" href="{{ url_for('game.ASD') }}">ASD Game</a>
+            <a class="btn btn-primary" href="{{ url_for('game.ADHD') }}">ADHD Game</a>
+        </p>
+    </div>
+    
 {% endblock %}

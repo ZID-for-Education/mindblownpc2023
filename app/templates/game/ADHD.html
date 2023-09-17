@@ -63,6 +63,13 @@
             function onHoverEnd(){
                 HoverTarget = null;
             }
+
+            function gameOver(){
+                //stops the game and force the user to redirect to the game check page
+                app.stop();
+                //redirect to the game check page
+                window.location.href = "{{ url_for('game.gameOver') }}";
+            }
     
             app.ticker.add(function(delta){
                 //sprite's x and y are changed randomly and incrementally here
@@ -78,7 +85,12 @@
                 if(HoverTarget){
                     eaten += delta;
                 }
-                console.log(eaten);
+                if(eaten > 3000){
+                    gameOver();
+                }
+                if(elapsed > 6000){
+                    gameOver();
+                }
                 //if the target's y is smaller than 0 or bigger than the height of the screen
                 //change the direction
                 if(target.y < 0 || target.y > app.screen.height){

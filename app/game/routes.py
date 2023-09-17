@@ -13,3 +13,7 @@ def ASD():
 @bp.route('/ADHD')
 def ADHD():
     return render_template('game/ADHD.html')
+
+@bp.route('/game-over')
+def gameOver():
+    return render_template('game/game-over.html')

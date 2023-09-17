@@ -94,8 +94,20 @@
                 //stops the game and force the user to redirect to the game check page
                 app.stop();
                 //redirect to the game check page
-                // window.location.href = "";
+                window.location.href = "{{ url_for('game.gameOver') }}";
             }
+
+            function testForAABB(object1, object2)
+            {
+                const bounds1 = object1.getBounds();
+                const bounds2 = object2.getBounds();
+            
+                return bounds1.x < bounds2.x + bounds2.width
+                    && bounds1.x + bounds1.width > bounds2.x
+                    && bounds1.y < bounds2.y + bounds2.height
+                    && bounds1.y + bounds1.height > bounds2.y;
+            }
+
 
             app.ticker.add(function(delta){
                 elapsed += delta;
@@ -116,6 +128,10 @@
                     //place an arrow on the screen to show the direction
                     arrow = createSprite(bunny.x + Math.cos(angle) * distance * 0.5, bunny.y + Math.sin(angle) * distance * 0.5, arrow_text, 2, false);
                     arrow.rotation = angle;
+                }
+                if(testForAABB(bunny, target)){
+                    //game over
+                    gameOver();
                 }
             });
         </script>

@@ -2,7 +2,10 @@
 
 {% block title %}Profile{% endblock %}
 {% block content %}
-    <h1>Profile</h1>
+    <div class="container-fluid">
+        <h1>Profile</h1>
+        <p>This is where the user/caretaker can check how much their child played with the product as well as how they did on the product. Note that this is adjusted to the ADHD or ASD attribute of the child.</p>
+    </div>
     <div id="container"></div>
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
     <script type="module">
@@ -22,7 +25,7 @@
 
         // Declare the y (vertical position) scale.
         const y = d3.scaleLinear()
-            .domain([0, d3.max(data, row => row["score"])]).nice()
+            .domain([0, d3.max(data, row => row["score"])])
             .range([height - marginBottom, marginTop]);
 
         // Create the SVG container.
@@ -30,16 +33,18 @@
         .attr("viewBox", [0, 0, width, height])
         .attr("style", `max-width: ${width}px; height: auto; font: 10px sans-serif; overflow: visible;`);
 
-        // Add the bars.
-        const bar = svg.append("g")
-            .attr("fill", "steelblue")
-            .selectAll("rect")
-            .data(data)
-            .join("rect")
-            .attr("x", row => x(row["set"]))
-            .attr("y", row => y(row["score"]))
-            .attr("height", row => y(0) - y(row["score"]))
-            .attr("width", x.bandwidth());
+        // add the line
+        svg.append("path")
+            .datum(data)
+            .attr("fill", "none")
+            .attr("stroke", "steelblue")
+            .attr("stroke-width", 1.5)
+            .attr("d", d3.line()
+                .x(d => x(d["set"]))
+                .y(d => y(d["score"]))
+            )
+        //shift the line to the right
+        svg.selectAll("path").attr("transform", "translate(" + x.bandwidth() / 2 + ",0)");
 
         const gx = svg.append("g")
             .attr("transform", `translate(0,${height - marginBottom})`)
@@ -47,7 +52,7 @@
 
         const gy = svg.append("g")
             .attr("transform", `translate(${marginLeft},0)`)
-            .call(d3.axisLeft(y).tickFormat((y) => (y * 100).toFixed()))
+            .call(d3.axisLeft(y));
 
         // Append the SVG element.
         container.append(svg.node());
