@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>You did it</title>
+<link href="{{ url_for('static', filename='css/title.css')}}" rel="stylesheet" type="text/css">
+<link href="{{ url_for('static', filename='css/dialog.css')}}" rel="stylesheet" type="text/css">
+<link href="{{ url_for('static', filename='css/buttons.css')}}" rel="stylesheet" type="text/css">
+<style type="text/css">
+body {
+	background-image: url({{ url_for('static', filename='img/Slide1.png')}});
+	background-repeat: no-repeat;
+    background-size: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+</style>
+
+<body><h1 id="dialog">YOU DID IT!</h1>
+    <a href="{{ url_for('game.index')}}">
+        <img src="{{ url_for('static', filename='img/play-3.png')}}" alt="" width="246" height="246" id="button"/>
+    </a>
+</body>
+</html>

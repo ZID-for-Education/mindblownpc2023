@@ -1,0 +1,8 @@
+@charset "UTF-8";
+#dialog {
+	text-align: center;
+	font-family: "Gill Sans", "Gill Sans MT", "Myriad Pro", "DejaVu Sans Condensed", Helvetica, Arial, sans-serif;
+	font-size: 100px;
+	color: #6BA342;
+	text-shadow: 10px 10px #FBED16;
+}
